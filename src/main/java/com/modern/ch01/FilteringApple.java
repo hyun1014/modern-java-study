@@ -1,6 +1,10 @@
 package com.modern.ch01;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -20,24 +24,31 @@ public class FilteringApple {
         return result;
     }
     public static void main(String[] args) {
-        Apple apple1 = new Apple("Green", 150);
-        Apple apple2 = new Apple("Red", 150);
-        Apple apple3 = new Apple("Green", 50);
+        Apple apple1 = new Apple(AppleColor.RED, 10);
+        Apple apple2 = new Apple(AppleColor.GREEN, 20);
+        Apple apple3 = new Apple(AppleColor.GREEN, 15);
+        List<Apple> appleList = new ArrayList<>(List.of(apple1, apple2, apple3));
 
-        List<Apple> appleList = new ArrayList<>();
-        appleList.add(apple1);
-        appleList.add(apple2);
-        appleList.add(apple3);
+        // classic
+        Collections.sort(appleList, new Comparator<Apple>() {
+            @Override
+            public int compare(Apple o1, Apple o2) {
+                return Integer.compare(o1.getWeight(), o2.getWeight());
+            }
+        });
+        appleList.forEach(System.out::println);
+        System.out.println();
 
-        System.out.println("Weight filtered");
-        List<Apple> weightFilteredList = getFilteredApples(appleList, Apple::isHeavy);
-        weightFilteredList.forEach(System.out::println);
+        // using lambda
+        appleList.sort((a1, a2) -> Integer.compare(a2.getWeight(), a1.getWeight()));
+        appleList.forEach(System.out::println);
+        System.out.println();
 
-        System.out.println("Color filtered");
-        List<Apple> colorFilteredList = getFilteredApples(appleList, Apple::isGreen);
-        colorFilteredList.forEach(System.out::println);
+        // using functional
+        appleList.sort(Comparator.comparingInt(Apple::getWeight));
+        appleList.forEach(System.out::println);
+        System.out.println();
 
-        System.out.println("Weight filtered 2");
-        getFilteredApples(appleList, apple -> apple.getWeight() < 200).forEach(System.out::println);
+
     }
 }

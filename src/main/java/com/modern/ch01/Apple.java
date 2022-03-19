@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class Apple {
-    String color;
+    AppleColor color;
     int weight;
 
     public static boolean isGreen(Apple apple) {
-        return apple.getColor().toLowerCase().equals("green");
+        return apple.getColor().equals(AppleColor.GREEN);
     }
     public static boolean isHeavy(Apple apple) {
         return apple.getWeight() > 100;

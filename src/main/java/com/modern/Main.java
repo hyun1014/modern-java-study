@@ -1,17 +1,11 @@
 package com.modern;
 
-import com.modern.ch01.Apple;
-
 import java.io.File;
 import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        File file = new File(".");
-        File[] files = file.listFiles(File::isHidden);
-        assert files != null;
-        Arrays.stream(files).map(File::getName).forEach(System.out::println);
-
-
+        File[] hiddenFiles = new File(".").listFiles(file -> file.isHidden());
+        Arrays.stream(hiddenFiles).forEach(System.out::println);
     }
 }
