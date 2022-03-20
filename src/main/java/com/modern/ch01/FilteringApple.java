@@ -7,26 +7,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class FilteringApple {
-    static List<Apple> getFilteredApples(List<Apple> list, Predicate<Apple> p) {
-        List<Apple> result = new ArrayList<>();
-
-        // loop
-        for (Apple apple : list) {
-            if (p.test(apple)) {
-                result.add(apple);
-            }
-        }
-        // stream
-        list.stream().filter(p).forEach(result::add);
-
-        return result;
+    public static List<Apple> filterApple(List<Apple> list, Predicate<Apple> predicate) {
+        return list.stream().filter(predicate).collect(Collectors.toList());
     }
+
     public static void main(String[] args) {
-        Apple apple1 = new Apple(AppleColor.RED, 10);
-        Apple apple2 = new Apple(AppleColor.GREEN, 20);
-        Apple apple3 = new Apple(AppleColor.GREEN, 15);
+        Apple apple1 = new Apple(AppleColor.RED, 100);
+        Apple apple2 = new Apple(AppleColor.GREEN, 200);
+        Apple apple3 = new Apple(AppleColor.GREEN, 150);
         List<Apple> appleList = new ArrayList<>(List.of(apple1, apple2, apple3));
 
         // classic
@@ -49,6 +40,13 @@ public class FilteringApple {
         appleList.forEach(System.out::println);
         System.out.println();
 
+        // filtering by weight 100
+        List<Apple> filteredList = filterApple(appleList, Apple::isHeavyThan100);
+        filteredList.forEach(System.out::println);
+        System.out.println();
 
+        List<Apple> filteredList2 = appleList.stream().filter(apple -> Apple.isHeavyThanCondition(apple, 150)).collect(Collectors.toList());
+        filteredList2.forEach(System.out::println);
+        System.out.println();
     }
 }
