@@ -1,5 +1,8 @@
 package com.modern.ch03;
 
+import com.modern.ch01.Apple;
+import com.modern.ch01.AppleColor;
+
 import java.util.function.*;
 
 public class InterfaceTest {
@@ -38,7 +41,13 @@ public class InterfaceTest {
         Integer modifiedAge = testUnaryOperator(person.getAge(), n -> n * 2, n -> n + 2);
         System.out.println(modifiedAge);
 
+        class Foo {
+            int num;
+            Foo(int num) {this.num = num;}
+        }
 
+        Function<Integer, Foo> f1 = Foo::new;
+        BiFunction<AppleColor, Integer, Apple> b1 = Apple::new;
     }
 
     static <T> void testPredicate(T target, Predicate<T> predicate) {
