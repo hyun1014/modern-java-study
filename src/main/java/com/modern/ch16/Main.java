@@ -2,6 +2,7 @@ package com.modern.ch16;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -38,39 +39,57 @@ public class Main {
 //        }
 
         // Completable
-//        CompletableFuture<String> cf1 = CompletableFuture.supplyAsync(() -> {
-//            log.info("cf - string");
-//            try {
-//                Thread.sleep(TimeUnit.SECONDS.toMillis(3L));
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            log.info("done");
-//            return "Hello";
-//        });
-//
-//        CompletableFuture<String> cf2 = CompletableFuture.supplyAsync(() -> {
-//            log.info("cf - string");
-//            try {
-//                Thread.sleep(TimeUnit.SECONDS.toMillis(1L));
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            log.info("done");
-//            return "Hello";
-//        });
-//
-//        log.info(cf1.get());
-//        log.info(cf2.get());
+        CompletableFuture<String> cf1 = CompletableFuture.supplyAsync(() -> {
+            log.info("cf - string");
+            try {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(1L));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("done");
+            return "Hello";
+        });
 
-        Shop shop1 = new Shop();
-        CompletableFuture<Integer> cf = shop1.getPriceAsync(6L);
-        for (int i = 0; i < 5; i++) {
-            Thread.sleep(1000);
-            log.info("sleep... " + i);
+        CompletableFuture<String> cf3 = new CompletableFuture<>();
+        log.info(cf3.isDone() ? "cf3 completed" : "cf3 not completed");
+
+        CompletableFuture<String> cf2 = CompletableFuture.supplyAsync(() -> {
+            log.info("cf - string");
+            try {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(1L));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            log.info("done");
+            cf3.complete("cf2 is completed!");
+            return "Hello";
+        });
+
+        log.info(cf1.get());
+        log.info(cf2.get());
+
+        log.info(cf3.isDone() ? "cf3 completed" : "cf3 not completed");
+        log.info(cf3.get());
+
+        CompletableFuture<String> cf4 = new CompletableFuture<>();
+        cf4.completeExceptionally(new CancellationException("cancelled"));
+
+        try {
+            log.info(cf4.get());
+        } catch (CancellationException e) {
+            log.error(e.getMessage());
         }
-        log.info("price1 = " + cf.get(30, TimeUnit.SECONDS));
 
-        Shop.executor.shutdown();
+        CompletableFuture<String> cf5 = new CompletableFuture<>();
+
+//        Shop shop1 = new Shop();
+//        CompletableFuture<Integer> cf = shop1.getPriceAsync(6L);
+//        for (int i = 0; i < 5; i++) {
+//            Thread.sleep(1000);
+//            log.info("sleep... " + i);
+//        }
+//        log.info("price1 = " + cf.get(30, TimeUnit.SECONDS));
+//
+//        Shop.executor.shutdown();
     }
 }

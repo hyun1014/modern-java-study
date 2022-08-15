@@ -1,41 +1,55 @@
 package com.modern.ch06;
 
-import com.modern.ch05.Artist;
+import com.modern.CommonUtil;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.IntSummaryStatistics;
 import java.util.List;
-import static java.util.stream.Collectors.*;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.modern.CommonUtil.*;
 
 
 public class ReducingPractice {
     public static void main(String[] args) {
-        List<Artist> artistList = Arrays.asList(
-                new Artist("Broken valentine", 5,  Artist.Genre.ROCK, OffsetDateTime.of(LocalDateTime.of(2007, 1, 1, 0, 0, 0), ZoneOffset.UTC)),
-                new Artist("Alter bridge", 4, Artist.Genre.ROCK, OffsetDateTime.of(LocalDateTime.of(2004, 1, 1, 0, 0, 0), ZoneOffset.UTC)),
-                new Artist("Thornapple", 4, Artist.Genre.INDIE, OffsetDateTime.of(LocalDateTime.of(2009, 1, 1, 0, 0, 0), ZoneOffset.UTC)),
-                new Artist("Cotoba", 4, Artist.Genre.INDIE, OffsetDateTime.of(LocalDateTime.of(2018, 1, 1, 0, 0, 0), ZoneOffset.UTC)),
-                new Artist("TWICE", 8, Artist.Genre.DANCE, OffsetDateTime.of(LocalDateTime.of(2015, 1, 1, 0, 0, 0), ZoneOffset.UTC)),
-                new Artist("IZONE", 12, Artist.Genre.DANCE, OffsetDateTime.of(LocalDateTime.of(2018, 1, 1, 0, 0, 0), ZoneOffset.UTC))
+        List<Transaction> transactions = Arrays.asList(
+                new Transaction(Currency.KO, 100),
+                new Transaction(Currency.KO, 500),
+                new Transaction(Currency.JP, 50),
+                new Transaction(Currency.JP, 300),
+                new Transaction(Currency.US, 80),
+                new Transaction(Currency.US, 200)
         );
 
-        // get count, sum, min, max, average at once
-        IntSummaryStatistics summaryStatistics = artistList.stream().collect(summarizingInt(Artist::getCountOfMember));
-        System.out.println(summaryStatistics);
+        long cnt1 = transactions.stream().collect(Collectors.counting());
+        long cnt2 = transactions.stream().count();
+        assert cnt1 != cnt2;
 
-        // get max
-        artistList.stream().max(Comparator.comparingInt(Artist::getCountOfMember)).ifPresent(System.out::println);
+        transactions.stream().max(Comparator.comparingInt(Transaction::getCost)).ifPresent(CommonUtil::println);
 
-        // join String 핡 개꿀
-        String allNameJoinedString = artistList.stream().map(Artist::getName).collect(joining(" , "));
-        System.out.println(allNameJoinedString);
+        // num mapping
+        int costSum = transactions.stream().mapToInt(Transaction::getCost).sum();
+        println(costSum);
 
-        // same reducing
-        artistList.stream().map(artist -> artist.getDebut().getYear()).collect(reducing((a1, a2) -> a1 > a2 ? a1 : a2)).ifPresent(System.out::println);
-        artistList.stream().map(artist -> artist.getDebut().getYear()).reduce((a1, a2) -> a1 > a2 ? a1 : a2).ifPresent(System.out::println);
+        // String join
+        String joinedString = transactions.stream()
+                                            .map(it -> "(" + it.getCurrency() + ", " + it.getCost() + ")")
+                                            .collect(Collectors.joining(" / ", "[", "]"));
+        println(joinedString);
+
+        // grouping
+        Map<Currency, List<Transaction>> currencyMap = transactions.stream()
+                .collect(Collectors.groupingBy(Transaction::getCurrency));
+        currencyMap.get(Currency.JP).forEach(CommonUtil::println);
+
+        Map<Currency, List<Transaction>> highCurrencyMap = transactions.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::getCurrency,
+                        Collectors.filtering(it -> it.getCost() >= 300, Collectors.toList())
+                ));
+        println(highCurrencyMap.get(Currency.US).stream().count());
+
+
     }
 }

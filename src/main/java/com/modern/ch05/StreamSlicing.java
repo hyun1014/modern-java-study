@@ -1,6 +1,6 @@
 package com.modern.ch05;
 
-import com.modern.Common;
+import com.modern.CommonUtil;
 import com.modern.ch04.Dish;
 
 import java.util.Arrays;
@@ -20,13 +20,13 @@ public class StreamSlicing {
         dishList.stream()
                 .filter(Dish::isVegetarian)
                 .forEach(System.out::println);
-        Common.printLine();
+        CommonUtil.printLine();
 
         // takeWhile
         dishList.stream()
                 .takeWhile(dish -> dish.getCalories() < 400)
                 .forEach(System.out::println);
-        Common.printLine();
+        CommonUtil.printLine();
 
         // dropWhile
         dishList.stream()

@@ -1,10 +1,10 @@
 package com.modern;
 
-import java.util.HashSet;
-import java.util.Set;
-
-public class Common {
+public class CommonUtil {
     public static void printLine() {
         System.out.println("=======================");
+    }
+    public static void println(Object o) {
+        System.out.println(o);
     }
 }
